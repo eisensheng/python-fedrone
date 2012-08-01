@@ -30,20 +30,22 @@ setup(
     name='FeDrone',
     version='1',
     packages=find_packages(),
-    install_requires=[
-        'pyglet == 1.2alpha1',
-    ],
+
+    extras_require={
+        'demo': ['pyglet == 1.2alpha1', ]
+    },
     url='https://bitbucket.org/eisensheng/python-fedrone',
     license='MIT',
     author='Arthur S.',
     author_email='eisensheng@gmail.com',
     description='',
     ext_modules=[Extension('fedrone.video._decoder',
-                           glob('src/*.c') + glob('src/vendor/*.c'),
-                           extra_compile_args=c_flags)],
+                           glob('src/*.c'),
+                           extra_compile_args=c_flags,
+                           depends=glob('src/*.h'))],
     entry_points = {
         'console_scripts': [
-            'fedrone-demo = fedrone.demo.main:main',
+            'fedrone-demo = fedrone.demo.main:main [demo]',
         ],
     }
 )
