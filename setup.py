@@ -41,8 +41,7 @@ setup(
     description='',
     ext_modules=[Extension('fedrone.video._decoder',
                            glob('src/*.c'),
-                           extra_compile_args=c_flags,
-                           depends=glob('src/*.h'))],
+                           extra_compile_args=c_flags)],
     entry_points = {
         'console_scripts': [
             'fedrone-demo = fedrone.demo.main:main [demo]',
