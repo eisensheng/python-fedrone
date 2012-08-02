@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 from fedrone.command.networking import CommandSocket
+from fedrone.datatypes.enum import new_enum
 
 
 class ArDrone(object):
+    VideoChannel = new_enum('VideoChannel', ('FRONT',
+                                             'BOTTOM',
+                                             'LARGE_FRONT_SMALL_BOTTOM',
+                                             'LARGE_BOTTOM_SMALL_FRONT',
+                                             'NEXT',))
+
     def __init__(self):
         self.command = CommandSocket()
         self.command.at_config('general:navdata_demo', 'TRUE')
@@ -11,13 +18,15 @@ class ArDrone(object):
         self._axis_state = [0.0, ] * 4
 
     def _update_moving(self):
-        # print self._axis_state
         if max(*(abs(x) for x in self._axis_state)) < 0.01:
             self.hover()
 
         else:
             axis_state = map(lambda x: x * self._speed, self._axis_state)
             self.move(*axis_state)
+
+    def select_camera(self, channel):
+        self.command.at_zap(channel)
 
     def flat_trim(self):
         self.command.at_ftrim()
