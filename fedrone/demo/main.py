@@ -123,6 +123,8 @@ class ArDroneWindow(Window):
             key.RETURN: lambda: self.drone.takeoff(),
             key.SPACE: lambda: self.drone.land(),
             key.BACKSPACE: lambda: self.drone.reset(),
+            key.C: lambda: self.drone.select_camera(self.drone
+                                                        .VideoChannel.NEXT),
         }
 
         handler = key_handlers.get(symbol)
