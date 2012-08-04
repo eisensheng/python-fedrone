@@ -1,8 +1,15 @@
 # -*- coding: utf-8 -*-
 from fedrone.command.networking import CommandSocket
+from fedrone.datatypes.enum import new_enum
 
 
 class ArDrone(object):
+    VideoChannel = new_enum('VideoChannel', ('FRONT',
+                                             'BOTTOM',
+                                             'LARGE_FRONT_SMALL_BOTTOM',
+                                             'LARGE_BOTTOM_SMALL_FRONT',
+                                             'NEXT',))
+
     def __init__(self):
         self.command = CommandSocket()
         self.command.at_config('general:navdata_demo', 'TRUE')
@@ -11,13 +18,23 @@ class ArDrone(object):
         self._axis_state = [0.0, ] * 4
 
     def _update_moving(self):
-        # print self._axis_state
         if max(*(abs(x) for x in self._axis_state)) < 0.01:
             self.hover()
 
         else:
             axis_state = map(lambda x: x * self._speed, self._axis_state)
             self.move(*axis_state)
+
+    def config_drone(self, module, key, value):
+        if isinstance(value, bool):
+            value = 'TRUE' if value else 'FALSE'
+        else:
+            value = str(value)
+
+        self.command.at_config('%s:%s' % (module, key), value)
+
+    def select_camera(self, channel):
+        self.config_drone('video', 'video_channel', channel)
 
     def flat_trim(self):
         self.command.at_ftrim()
@@ -31,12 +48,12 @@ class ArDrone(object):
     def land(self):
         self.command.at_ref(takeoff=False)
 
-    def emergency(self):
-        self.command.at_ref(emergency=True)
+    def emergency(self, emergency=True):
+        self.command.at_ref(emergency=emergency)
 
     def reset(self):
-        self.command.at_ref(emergency=True)
-        self.command.at_ref(emergency=False)
+        self.emergency(True)
+        self.emergency(False)
 
     def hover(self):
         self.command.at_pcmd(False, False, 0.0, 0.0, 0.0, 0.0)

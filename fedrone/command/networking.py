@@ -17,7 +17,7 @@ class CommandSocket(SocketSender):
 
         self.sequence = 1
 
-    def at(self, command, *args):
+    def simple_at(self, command, *args):
         coerced_args = [str(self.sequence), ]
 
         coerce_func_finder = self._at_coercing_map.get
@@ -37,7 +37,7 @@ class CommandSocket(SocketSender):
         if emergency:
             options |= 0b0100000000
 
-        self.at('REF', options)
+        self.simple_at('REF', options)
 
     def at_pcmd(self, progressive, combined_yaw,
                 left_right, front_back, altitude, yaw):
@@ -48,22 +48,25 @@ class CommandSocket(SocketSender):
         if combined_yaw:
             options |= 0b0010
 
-        self.at('PCMD', options, left_right, front_back, altitude, yaw)
+        self.simple_at('PCMD', options, left_right, front_back, altitude, yaw)
 
     def at_ftrim(self):
-        self.at('FTRIM')
+        self.simple_at('FTRIM')
 
     def at_config(self, key, value):
-        self.at('CONFIG', key, value)
+        self.simple_at('CONFIG', key, value)
 
     def at_config_ids(self, session_id, user_id, application_id):
-        self.at('CONFIG_IDS', session_id, user_id, application_id)
+        self.simple_at('CONFIG_IDS', session_id, user_id, application_id)
 
     def at_comwdg(self):
-        self.at('COMWDG')
+        self.simple_at('COMWDG')
 
     def at_led(self, animation, freq, duration):
-        self.at('LED', animation, freq, duration)
+        self.simple_at('LED', animation, freq, duration)
 
     def at_anim(self, animation, duration):
-        self.at('ANIM', animation, duration)
+        self.simple_at('ANIM', animation, duration)
+
+    def at_zap(self, channel):
+        self.simple_at('ZAP', channel)
