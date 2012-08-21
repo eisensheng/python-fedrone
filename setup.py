@@ -28,7 +28,7 @@ if cc_name == 'gcc':
 
 setup(
     name='FeDrone',
-    version='1',
+    version='1.1',
     packages=find_packages(),
     install_requires=[
         'pyglet == 1.2alpha1',
