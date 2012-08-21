@@ -7,10 +7,10 @@
 #include "bitstream.h"
 
 
-typedef struct FeDrone_BitStreamReader_ {
+struct FeDrone_BitStreamReader_ {
     PyObject *data_buffer;
     uint32_t  offset;
-} FeDrone_BitStreamReader;
+};
 
 
 static inline void
@@ -34,7 +34,7 @@ __BitStreamReader_peek (
     uint32_t  shift = (64 - bits) - (self->offset & 31);
     uint64_t  mask = ((1ull << bits) - 1) << shift;
     uint32_t  output;
-    
+
     chunk = chunk << 32 | (chunk >> 32 & 0xffffffffull);
     output = (uint32_t)(((chunk & mask) >> shift) & ((1ull << bits) - 1));
 
