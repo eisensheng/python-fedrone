@@ -1,8 +1,28 @@
 # -*- coding: utf-8 -*-
-import subprocess
 import os
+import subprocess
+import sys
 from glob import glob
+
+from setuptools.command.develop import develop as DevelopBase
 from setuptools import setup, find_packages, Extension
+
+
+class DevelopCommand(DevelopBase):
+    def run(self):
+        return_value = DevelopBase.run(self)
+        if not self.uninstall:
+            try:
+                import pip
+
+            except ImportError:
+                print >>sys.stderr, (u'Don’t forget to install requirements '
+                                     u'from devel_requirements.txt')
+
+            else:
+                pip.main(['install', '-r', './devel_requirements.txt', ])
+
+        return return_value
 
 
 def configure():
@@ -36,6 +56,7 @@ def configure():
 
 
 setup(
+    cmdclass={'develop': DevelopCommand, },
     name='FeDrone',
     version='1.1',
     packages=find_packages(),
